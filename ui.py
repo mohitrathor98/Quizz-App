@@ -14,8 +14,7 @@ class QuizInterface:
         self.window.config(padx=20, pady=20, bg=THEME_COLOR)
         
         # score label
-        self.score = 0
-        self.score_label = Label(text=f"Score:{self.score}", bg=THEME_COLOR, fg="white")
+        self.score_label = Label(text="Score: 0", bg=THEME_COLOR, fg="white")
         self.score_label.grid(column=1, row=0)
         
         # question
@@ -44,9 +43,15 @@ class QuizInterface:
         self.window.mainloop()
         
     def get_next_question(self):
-        question_text = self.quiz.next_question()
         self.canvas.config(bg="white")
-        self.canvas.itemconfig(self.question, text=question_text)
+        if self.quiz.still_has_questions():
+            question_text = self.quiz.next_question()
+            self.score_label.config(text=f"Score: {self.quiz.score}")
+            self.canvas.itemconfig(self.question, text=question_text)
+        else:
+            self.canvas.itemconfig(self.question, text="You've reached the end of the quiz.")
+            self.correct.config(state="disabled")
+            self.wrong.config(state="disabled")
         
     def check_button(self):
         self.give_feedback(self.quiz.check_answer("True"))
