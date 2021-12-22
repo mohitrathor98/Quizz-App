@@ -32,11 +32,11 @@ class QuizInterface:
         
         # buttons
         correct_image = PhotoImage(file="images/true.png")
-        self.correct = Button(image=correct_image, highlightthickness=0, bg=THEME_COLOR)
+        self.correct = Button(image=correct_image, highlightthickness=0, bg=THEME_COLOR, command=self.check_button)
         self.correct.grid(column=0, row=2)
         
         wrong_image = PhotoImage(file='images/false.png')
-        self.wrong = Button(image=wrong_image, highlightthickness=0, bg=THEME_COLOR)
+        self.wrong = Button(image=wrong_image, highlightthickness=0, bg=THEME_COLOR, command=self.cross_button)
         self.wrong.grid(column=1, row=2)
         
         self.get_next_question()
@@ -45,4 +45,18 @@ class QuizInterface:
         
     def get_next_question(self):
         question_text = self.quiz.next_question()
+        self.canvas.config(bg="white")
         self.canvas.itemconfig(self.question, text=question_text)
+        
+    def check_button(self):
+        self.give_feedback(self.quiz.check_answer("True"))
+    
+    def cross_button(self):
+        self.give_feedback(self.quiz.check_answer("False"))
+        
+    def give_feedback(self, is_right):
+        if is_right:
+            self.canvas.config(bg="green")
+        else:
+            self.canvas.config(bg="red")
+        self.window.after(1000, func=self.get_next_question)
